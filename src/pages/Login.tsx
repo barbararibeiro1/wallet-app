@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { updateEmail } from '../redux/actions/index';
-import { UPDATE_EMAIL } from '../redux/actions/index';
-
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [btnEnable, setBtnEnable] = useState(false);
 
-  const loginRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i
+  const loginRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
   
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -30,26 +28,21 @@ function Login() {
   };
   
   useEffect(() => { 
-    console.log('Email: ', email);
-    console.log('Password: ', password);
     const isEmailValid = loginRegex.test(email);
     const isPasswordValid = password.length >= 6;
-    console.log('Is email valid: ', isEmailValid);
-    console.log('Is password valid: ', isPasswordValid);
     setBtnEnable(isEmailValid && isPasswordValid);
-    console.log('Button enabled: ', btnEnable);
   }, [email, password]); 
 
   return (
     <div>
-      <form action="">
-      <input 
-        type="email" 
-        name="email"
-        data-testid='email-input' 
-        value={email} 
-        onChange={handleEmailChange}
-      />
+      <form onSubmit={handleLogin}>
+        <input 
+          type="email" 
+          name="email"
+          data-testid='email-input' 
+          value={email} 
+          onChange={handleEmailChange}
+        />
         <input 
           type="password" 
           name="password" 
@@ -59,10 +52,10 @@ function Login() {
           autoComplete="current-password"
         />     
         <button 
+          type="submit"
           disabled={!btnEnable}
-          onClick={(e) => handleLogin(e)}
         >
-        Entrar
+          Entrar
         </button>
       </form>      
     </div>
