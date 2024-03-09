@@ -90,7 +90,7 @@ function WalletForm() {
           value={ method }
         >
           <option value="Dinheiro">Dinheiro</option>
-          <option value="Cartão de cŕedito">Cartão de cŕedito</option>
+          <option value="Cartão de crédito">Cartão de crédito</option>
           <option value="Cartão de débito">Cartão de débito</option>
         </select>
         <select
