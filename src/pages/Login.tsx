@@ -9,16 +9,16 @@ function Login() {
   const [btnEnable, setBtnEnable] = useState(false);
 
   const loginRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
-  
-  let navigate = useNavigate();
+
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   const handleLogin = (e) => {
     e.preventDefault();
     dispatch(updateEmail(email));
     navigate('/carteira');
   };
-  
+
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
@@ -26,40 +26,40 @@ function Login() {
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
-  
-  useEffect(() => { 
+
+  useEffect(() => {
     const isEmailValid = loginRegex.test(email);
     const isPasswordValid = password.length >= 6;
     setBtnEnable(isEmailValid && isPasswordValid);
-  }, [email, password]); 
+  }, [email, password]);
 
   return (
     <div>
-      <form onSubmit={handleLogin}>
-        <input 
-          type="email" 
+      <form onSubmit={ handleLogin }>
+        <input
+          type="email"
           name="email"
-          data-testid='email-input' 
-          value={email} 
-          onChange={handleEmailChange}
+          data-testid="email-input"
+          value={ email }
+          onChange={ handleEmailChange }
         />
-        <input 
-          type="password" 
-          name="password" 
-          data-testid='password-input' 
-          value={password} 
-          onChange={handlePasswordChange}
+        <input
+          type="password"
+          name="password"
+          data-testid="password-input"
+          value={ password }
+          onChange={ handlePasswordChange }
           autoComplete="current-password"
-        />     
-        <button 
+        />
+        <button
           type="submit"
-          disabled={!btnEnable}
+          disabled={ !btnEnable }
         >
           Entrar
         </button>
-      </form>      
+      </form>
     </div>
-  )
+  );
 }
 
 export default Login;
