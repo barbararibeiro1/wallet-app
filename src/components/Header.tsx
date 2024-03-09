@@ -1,5 +1,19 @@
+import { useSelector } from 'react-redux';
+import { RootState } from '../types';
+
 function Header() {
-  return <div>Header</div>;
+  const emailData = useSelector((state: RootState) => state.user.email);
+  const totalExpense = useSelector((state: RootState) => state.wallet.totalExpense);
+  const currency = useSelector((state: RootState) => state.wallet.currency);
+
+  return (
+    <header>
+      <h1>Trybewallet</h1>
+      <p data-testid="email-field">{`Email: ${emailData}`}</p>
+      <p data-testid="total-field">{`Total: ${totalExpense}`}</p>
+      <p data-testid="header-currency-field">{`${currency}`}</p>
+    </header>
+  );
 }
 
 export default Header;
