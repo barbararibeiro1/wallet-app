@@ -12,6 +12,16 @@ export type RootState = {
 export type WalletType = {
   totalExpense: number;
   exchangeRates: number;
-  outgoing: Array<number>;
+  outgoing: Array<ExpenseType>;
   currency: string;
+};
+
+export type ExpenseType = {
+  id: number;
+  value: number;
+  description: string;
+  currency: string;
+  method: string;
+  tag: string;
+  exchangeRates: any;
 };

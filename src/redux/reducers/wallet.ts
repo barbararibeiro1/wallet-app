@@ -5,6 +5,7 @@ const initialState = {
   exchangeRates: 0,
   outgoing: [],
   currency: 'BRL',
+  currencies: [],
 };
 
 function calculateTotalExpense(outgoing) {
@@ -25,6 +26,19 @@ const walletReducer = (state = initialState, action: AnyAction) => {
       return {
         ...state,
         currency: action.payload,
+      };
+    case 'ADD_EXPENSE':
+      const newExpenses = [ ...state.outgoing, action.payload ];
+      const newTotal = newExpenses.reduce((sum, expense) => sum + expense.value, 0);
+      return {
+        ...state,
+        outgoing: newExpenses,
+        totalExpense: newTotal,
+      };
+    case 'SET_CURRENCIES':
+      return {
+        ...state,
+        currencies: action.payload,
       };
     default:
       return state;
