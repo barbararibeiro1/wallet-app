@@ -10,7 +10,7 @@ function Header() {
     <header>
       <h1>Trybewallet</h1>
       <p data-testid="email-field">{`Email: ${emailData}`}</p>
-      <p data-testid="total-field">{`Total: ${totalExpense}`}</p>
+      <p data-testid="total-field">{`${Number(totalExpense).toFixed(2)}`}</p>
       <p data-testid="header-currency-field">{`${currency}`}</p>
     </header>
   );

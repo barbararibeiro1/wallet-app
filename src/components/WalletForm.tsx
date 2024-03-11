@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/reducers';
 import { ThunkDispatch } from 'redux-thunk';
-import { addExpenseAction, fetchCurrenciesAndAddExpense } from '../redux/actions';
+import { addExpenseAction, fetchCurrenciesAndAddExpense, updateTotalExpense } from '../redux/actions';
 
 function WalletForm() {
   const dispatch = useDispatch<ThunkDispatch<RootState, unknown, any>>();
@@ -17,6 +17,18 @@ function WalletForm() {
   const [method, setMethod] = useState('Dinheiro');
   const [tag, setTag] = useState('Alimentação');
   const [prevUserCurrency, setPrevUserCurrency] = useState('');
+  const [totalExpense, setTotalExpense] = useState(0);
+
+  const calculateTotalExpense = () => {
+    let total = 0;
+    expenses.forEach((expense) => {
+      total += parseFloat(expense.convertedValue);
+    });
+    setTotalExpense(parseFloat(total.toFixed(2)));
+  };
+  useEffect(() => {
+    calculateTotalExpense();
+  }, [expenses]);
 
   useEffect(() => {
     if (prevUserCurrency !== userCurrency) {
@@ -25,31 +37,42 @@ function WalletForm() {
     }
   }, [dispatch, userCurrency, prevUserCurrency]);
 
-  const handleAddExpense = () => {
-    const selectedExchangeRate = exchangeRates[currency];
-    console.log('Chaves de exchangeRates:', Object.keys(exchangeRates));
-    if (!selectedExchangeRate) {
-      console.error(`Taxa de câmbio para ${currency} não está disponível`);
-      return;
+  const handleAddExpense = async () => {
+    try {
+      const response = await fetch('https://economia.awesomeapi.com.br/json/all');
+      const data = await response.json();
+      const exchangeRate = data[currency]?.ask;
+
+      const newId = expenses.length;
+      const selectedExchangeRate = exchangeRates[currency];
+      console.log('Chaves de exchangeRates:', Object.keys(exchangeRates));
+      if (!selectedExchangeRate) {
+        console.error(`Taxa de câmbio para ${currency} não está disponível`);
+        return;
+      }
+      const expenseValue = parseFloat(value);
+      const convertedValue = parseFloat(value) * parseFloat(exchangeRate);
+      const expense = {
+        id: newId,
+        value,
+        description,
+        currency,
+        method,
+        tag,
+        exchangeRate,
+        convertedValue,
+      };
+      dispatch(addExpenseAction(expense));
+      const updatedTotalExpense = parseFloat(totalExpense) + convertedValue;
+      dispatch(updateTotalExpense(updatedTotalExpense.toFixed(2)));
+      setValue('');
+      setDescription('');
+      setCurrency('USD');
+      setMethod('Dinheiro');
+      setTag('Alimentação');
+    } catch (error) {
+      console.error('Erro ao adicionar despesa:', error);
     }
-    const expenseValue = parseFloat(value);
-    const convertedValue = isNaN(expenseValue) ? 0 : expenseValue
-      * parseFloat(selectedExchangeRate.ask);
-    const expense = {
-      value,
-      description,
-      currency,
-      method,
-      tag,
-      exchangeRate: selectedExchangeRate.ask,
-      convertedValue,
-    };
-    dispatch(addExpenseAction(expense));
-    setValue('');
-    setDescription('');
-    setCurrency('USD');
-    setMethod('Dinheiro');
-    setTag('Alimentação');
   };
 
   console.log(currencies);
@@ -117,22 +140,17 @@ function WalletForm() {
           console.log('Despesa ou taxa de câmbio inválidos', expense);
           return null;
         }
-        const expenseValue = parseFloat(expense.value);
-        const exchangeRate = parseFloat(expense.exchangeRates[currency]?.ask);
-        if (!isNaN(expenseValue) && !isNaN(exchangeRate)) {
-          const convertedValue = (expenseValue
-            * exchangeRate) * (exchangeRates
-            && exchangeRates.BRL ? exchangeRates.BRL : 1);
+        const convertedValue = expense.convertedValue;
+
+        if (!isNaN(convertedValue)) {
           console.log('Valor convertido:', convertedValue);
           return (
-            <div key={ expense.id }>
-              <p>{expense.description}</p>
-              <p>{convertedValue}</p>
+            <div key={expense.id}>
+              <p>{`Descrição: ${expense.description}`}</p>
+              <p>{`Valor convertido: ${convertedValue.toFixed(2)} BRL`}</p>
             </div>
           );
         }
-        console.log('Valor da despesa ou taxa de câmbio inválidos', expense);
-        return null;
       })}
     </div>
   );

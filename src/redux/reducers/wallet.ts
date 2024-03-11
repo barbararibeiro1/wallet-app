@@ -53,6 +53,11 @@ const walletReducer = (state = initialState, action: AnyAction) => {
         ...state,
         exchangeRates: action.payload,
       };
+    case 'UPDATE_TOTAL_EXPENSE':
+      return {
+        ...state,
+        totalExpense: action.payload,
+      };
     default:
       return state;
   }

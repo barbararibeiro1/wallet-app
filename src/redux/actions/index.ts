@@ -24,6 +24,11 @@ export const addCurrency = (currency) => ({
   payload: currency,
 });
 
+export const updateTotalExpense = (totalExpense) => ({ 
+  type: 'UPDATE_TOTAL_EXPENSE',
+  payload: totalExpense,
+});
+
 const callApi = () => {
   return async (dispatch: DispatchType) => {
     try {
