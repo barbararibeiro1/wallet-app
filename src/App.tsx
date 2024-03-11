@@ -5,20 +5,18 @@ import Login from './pages/Login';
 import store from './redux/store';
 import Wallet from './pages/Wallet';
 import { DispatchType } from './types';
-import { callApi } from './redux/actions/index';
+import callApi from './redux/actions/index';
 
 function App() {
   const dispatch:DispatchType = useDispatch();
   useEffect(() => {
-    dispatch(callApi());
+    dispatch(callApi.callApi());
   }, [dispatch]);
   return (
-    <Provider store={ store }>
-      <Routes>
-        <Route path="/" element={ <Login /> } />
-        <Route path="/carteira" element={ <Wallet /> } />
-      </Routes>
-    </Provider>
+    <Routes>
+      <Route path="/" element={ <Login /> } />
+      <Route path="/carteira" element={ <Wallet /> } />
+    </Routes>
   );
 }
 

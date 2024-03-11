@@ -10,11 +10,10 @@ function WalletForm() {
   const userCurrency = useSelector((state: RootState) => state.wallet.currency);
   const currencies = useSelector((state: RootState) => state.wallet.currencies);
   const exchangeRates = useSelector((state: RootState) => state.wallet.exchangeRates);
-  console.log(exchangeRates);
 
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
-  const [currency, setCurrency] = useState('BRL');
+  const [currency, setCurrency] = useState('USD');
   const [method, setMethod] = useState('Dinheiro');
   const [tag, setTag] = useState('Alimentação');
   const [prevUserCurrency, setPrevUserCurrency] = useState('');
@@ -48,12 +47,12 @@ function WalletForm() {
     dispatch(addExpenseAction(expense));
     setValue('');
     setDescription('');
-    setCurrency('');
+    setCurrency('USD');
     setMethod('Dinheiro');
     setTag('Alimentação');
   };
 
-  console.log(value);
+  console.log(currencies);
 
   return (
     <div>
@@ -80,13 +79,12 @@ function WalletForm() {
         <select
           name="currency"
           data-testid="currency-input"
-          onChange={(e) => setCurrency(e.target.value)}
-          value={currency}
+          onChange={ (e) => setCurrency(e.target.value)}
+          value={ currency }
         >
-          <option value="">Selecione uma moeda</option>
-          {Object.values(currencies).map((currency) => (
-            <option key={`${currency.code}-${currency.name}` } value={currency.code}>
-              {currency.name}
+          {currencies.map((currency) => (
+            <option key={currency} value={currency}>
+              {currency}
             </option>
           ))}
         </select>

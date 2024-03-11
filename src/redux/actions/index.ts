@@ -24,13 +24,14 @@ export const addCurrency = (currency) => ({
   payload: currency,
 });
 
-export const callApi = () => {
+const callApi = () => {
   return async (dispatch: DispatchType) => {
     try {
       const response = await fetch('https://economia.awesomeapi.com.br/json/all');
       const data = await response.json();
       console.log(data);
-      const currencies = Object.keys(data);
+      const currencies = Object.keys(data).filter((currency) => currency !== 'USDT');
+      console.log('Moedas disponíveis: ', currencies);
       dispatch(setCurrencies(currencies));
     } catch (error) {
       console.error('Erro ao buscar moedas: ', error);
@@ -130,3 +131,5 @@ function calculateBRLExchangeRate(data, targetCurrency) {
 
   return indirectRate;
 }
+
+export default { callApi };
