@@ -1,66 +1,72 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/reducers/index';
-import { addExpenseAction, setCurrencies } from '../redux/actions/index';
+import { RootState } from '../redux/reducers';
+import { ThunkDispatch } from 'redux-thunk';
+import { addExpenseAction, fetchCurrenciesAndAddExpense } from '../redux/actions';
 
 function WalletForm() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<RootState, unknown, any>>();
+  const expenses = useSelector((state: RootState) => state.wallet.outgoing);
+  const userCurrency = useSelector((state: RootState) => state.wallet.currency);
   const currencies = useSelector((state: RootState) => state.wallet.currencies);
-  console.log(currencies);
-  const [nextId, setNextId] = useState(0);
-  const [exchangeRates, setExchangeRates] = useState({});
+  const exchangeRates = useSelector((state: RootState) => state.wallet.exchangeRates);
+  console.log(exchangeRates);
+
+  const [value, setValue] = useState('');
+  const [description, setDescription] = useState('');
+  const [currency, setCurrency] = useState('BRL');
+  const [method, setMethod] = useState('Dinheiro');
+  const [tag, setTag] = useState('Alimentação');
+  const [prevUserCurrency, setPrevUserCurrency] = useState('');
 
   useEffect(() => {
-    fetch('https://economia.awesomeapi.com.br/json/all')
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        const currencyKeys = Object.keys(data);
-        const filteredCurrencies = currencyKeys.filter((currency) => currency !== 'USDT');
-        dispatch(setCurrencies(filteredCurrencies));
-        console.log(filteredCurrencies);
-        setExchangeRates(data);
-      });
-  }, [dispatch]);
-
-  console.log(currencies);
+    if (prevUserCurrency !== userCurrency) {
+      dispatch(fetchCurrenciesAndAddExpense(expenses, userCurrency));
+      setPrevUserCurrency(userCurrency);
+    }
+  }, [dispatch, userCurrency, prevUserCurrency]);
 
   const handleAddExpense = () => {
+    const selectedExchangeRate = exchangeRates[currency];
+    console.log('Chaves de exchangeRates:', Object.keys(exchangeRates));
+    if (!selectedExchangeRate) {
+      console.error(`Taxa de câmbio para ${currency} não está disponível`);
+      return;
+    }
+    const expenseValue = parseFloat(value);
+    const convertedValue = isNaN(expenseValue) ? 0 : expenseValue
+      * parseFloat(selectedExchangeRate.ask);
     const expense = {
-      id: nextId,
       value,
       description,
       currency,
       method,
       tag,
-      exchangeRates: exchangeRates[currency],
+      exchangeRate: selectedExchangeRate.ask,
+      convertedValue,
     };
     dispatch(addExpenseAction(expense));
-    setNextId(nextId + 1);
     setValue('');
     setDescription('');
-    setCurrency('BRL');
-    setMethod('');
-    setTag('');
+    setCurrency('');
+    setMethod('Dinheiro');
+    setTag('Alimentação');
   };
 
-  const [value, setValue] = useState('');
-  const [description, setDescription] = useState('');
-  const [currency, setCurrency] = useState('');
-  const [method, setMethod] = useState('');
-  const [tag, setTag] = useState('');
-  const expenses = useSelector((state: RootState) => state.wallet.outgoing);
-  console.log(currencies);
+  console.log(value);
 
   return (
-    <>
+    <div>
       <form action="">
         <input
           type="number"
           name="value"
           data-testid="value-input"
           placeholder="Insira um valor"
-          onChange={ (e) => setValue(e.target.value) }
+          onChange={ (e) => {
+            console.log('Novo valor:', e.target.value);
+            setValue(e.target.value);
+          }}
           value={ value }
         />
         <input
@@ -68,26 +74,27 @@ function WalletForm() {
           name="description"
           data-testid="description-input"
           placeholder="Insira uma descrição"
-          onChange={ (e) => setDescription(e.target.value) }
-          value={ description }
+          onChange={(e) => setDescription(e.target.value)}
+          value={description}
         />
         <select
-          name=""
+          name="currency"
           data-testid="currency-input"
-          onChange={ (e) => setCurrency(e.target.value) }
-          value={ currency }
+          onChange={(e) => setCurrency(e.target.value)}
+          value={currency}
         >
-          {currencies && currencies.map((item) => (
-            <option key={ item } value={ item }>{ item }</option>
+          <option value="">Selecione uma moeda</option>
+          {Object.values(currencies).map((currency) => (
+            <option key={`${currency.code}-${currency.name}` } value={currency.code}>
+              {currency.name}
+            </option>
           ))}
-          ;
-
         </select>
         <select
           name="method"
           data-testid="method-input"
-          onChange={ (e) => setMethod(e.target.value) }
-          value={ method }
+          onChange={(e) => setMethod(e.target.value)}
+          value={method}
         >
           <option value="Dinheiro">Dinheiro</option>
           <option value="Cartão de crédito">Cartão de crédito</option>
@@ -96,8 +103,8 @@ function WalletForm() {
         <select
           name="tag"
           data-testid="tag-input"
-          onChange={ (e) => setTag(e.target.value) }
-          value={ tag }
+          onChange={(e) => setTag(e.target.value)}
+          value={tag}
         >
           <option value="Alimentação">Alimentação</option>
           <option value="Lazer">Lazer</option>
@@ -106,14 +113,30 @@ function WalletForm() {
           <option value="Saúde">Saúde</option>
         </select>
       </form>
-      <button type="button" onClick={ handleAddExpense }>Adicionar despesa</button>
-      {expenses.map((expense: ExpenseType) => (
-        <div key={expense.id}>
-          <p>{expense.description}</p>
-          <p>{expense.value}</p>
-        </div>
-      ))}
-    </>
+      <button type="button" onClick={handleAddExpense}>Adicionar despesa</button>
+      {expenses.map((expense: any) => {
+        if (!expense || !expense.exchangeRates) {
+          console.log('Despesa ou taxa de câmbio inválidos', expense);
+          return null;
+        }
+        const expenseValue = parseFloat(expense.value);
+        const exchangeRate = parseFloat(expense.exchangeRates[currency]?.ask);
+        if (!isNaN(expenseValue) && !isNaN(exchangeRate)) {
+          const convertedValue = (expenseValue
+            * exchangeRate) * (exchangeRates
+            && exchangeRates.BRL ? exchangeRates.BRL : 1);
+          console.log('Valor convertido:', convertedValue);
+          return (
+            <div key={ expense.id }>
+              <p>{expense.description}</p>
+              <p>{convertedValue}</p>
+            </div>
+          );
+        }
+        console.log('Valor da despesa ou taxa de câmbio inválidos', expense);
+        return null;
+      })}
+    </div>
   );
 }
 

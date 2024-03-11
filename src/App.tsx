@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import Login from './pages/Login';
 import store from './redux/store';
 import Wallet from './pages/Wallet';
+import { DispatchType } from './types';
+import { callApi } from './redux/actions/index';
 
 function App() {
+  const dispatch:DispatchType = useDispatch();
+  useEffect(() => {
+    dispatch(callApi());
+  }, [dispatch]);
   return (
     <Provider store={ store }>
       <Routes>

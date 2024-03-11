@@ -1,3 +1,6 @@
+import { ThunkDispatch } from "redux-thunk";
+import { AnyAction } from "redux";
+
 export type UserDataType = {
   user?: string;
   email: string;
@@ -11,7 +14,7 @@ export type RootState = {
 
 export type WalletType = {
   totalExpense: number;
-  exchangeRates: number;
+  exchangeRates: { [key: string]: number };
   outgoing: Array<ExpenseType>;
   currency: string;
 };
@@ -23,5 +26,11 @@ export type ExpenseType = {
   currency: string;
   method: string;
   tag: string;
-  exchangeRates: any;
+  exchangeRates: ExchangeRatesType;
 };
+
+export type ExchangeRatesType = {
+  [key: string]: number;
+};
+
+export type DispatchType = ThunkDispatch<RootState, unknown, AnyAction>;

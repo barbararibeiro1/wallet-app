@@ -2,15 +2,29 @@ import { AnyAction } from 'redux';
 
 const initialState = {
   totalExpense: 0,
-  exchangeRates: 0,
   outgoing: [],
   currency: 'BRL',
   currencies: [],
+  exchangeRates: {},
 };
 
 function calculateTotalExpense(outgoing) {
   return outgoing.reduce((total, item) => total + item.expense, 0);
 }
+
+const addExpense = (state, action) => {
+  const newExpense = {
+    ...action.payload,
+    exchangeRates: state.exchangeRates,
+  };
+  const newExpenses = [...state.outgoing, newExpense];
+  const newTotal = calculateTotalExpense(newExpenses);
+  return {
+    ...state,
+    outgoing: newExpenses,
+    totalExpense: newTotal,
+  };
+};
 
 const walletReducer = (state = initialState, action: AnyAction) => {
   switch (action.type) {
@@ -28,20 +42,20 @@ const walletReducer = (state = initialState, action: AnyAction) => {
         currency: action.payload,
       };
     case 'ADD_EXPENSE':
-      const newExpenses = [ ...state.outgoing, action.payload ];
-      const newTotal = newExpenses.reduce((sum, expense) => sum + expense.value, 0);
-      return {
-        ...state,
-        outgoing: newExpenses,
-        totalExpense: newTotal,
-      };
+      return addExpense(state, action);
     case 'SET_CURRENCIES':
       return {
         ...state,
         currencies: action.payload,
       };
+    case 'SET_EXCHANGE_RATES':
+      return {
+        ...state,
+        exchangeRates: action.payload,
+      };
     default:
       return state;
   }
 };
+
 export default walletReducer;

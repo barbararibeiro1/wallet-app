@@ -2,9 +2,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../types';
 
 function Header() {
-  const emailData = useSelector((state: RootState) => state.user.email);
-  const totalExpense = useSelector((state: RootState) => state.wallet.totalExpense);
-  const currency = useSelector((state: RootState) => state.wallet.currency);
+  const emailData = useSelector((state: RootState) => state.user.email) || '';
+  const totalExpense = useSelector((state: RootState) => state.wallet.totalExpense) || 0;
+  const currency = useSelector((state: RootState) => state.wallet.currency) || '';
 
   return (
     <header>
