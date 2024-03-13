@@ -39,6 +39,7 @@ function Login() {
         <input
           type="email"
           name="email"
+          aria-label="Email"
           data-testid="email-input"
           value={ email }
           onChange={ handleEmailChange }
@@ -46,6 +47,7 @@ function Login() {
         <input
           type="password"
           name="password"
+          aria-label="Senha:"
           data-testid="password-input"
           value={ password }
           onChange={ handlePasswordChange }

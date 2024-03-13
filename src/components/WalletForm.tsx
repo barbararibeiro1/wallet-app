@@ -56,7 +56,7 @@ function WalletForm() {
     setDescription('');
   };
   return (
-    <form action="" onSubmit={ submitForm }>
+    <form action="" onSubmit={ submitForm } data-testid="form-id">
       <InputElement
         test="value-input"
         field="Despesa"
