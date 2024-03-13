@@ -13,13 +13,18 @@ const walletReducer = (state = initialState, action: generalExpensesType) => {
     case SET_CURRENCIES: {
       return { ...state, currencies: action.payload.currencies };
     }
-    case success:
-      return {
+    case success: {
+      console.log('Received SUCCESS with data:', action.payload);
+      const newState = {
         ...state,
         expenses: [...state.expenses, ...action.payload.expenses],
       };
+      console.log('New state:', newState);
+      return newState;
+    }
     default:
       return state;
   }
 };
+
 export default walletReducer;

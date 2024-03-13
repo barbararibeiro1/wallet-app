@@ -8,7 +8,7 @@ function SelectComponent({ test, options, optionType,
       name={ optionType }
       id="any"
       data-testid={ test }
-      onChange={ (event) => onHandleChange(event)}
+      onChange={ (event) => onHandleChange(event) }
     >
       {Array.isArray(options) && options.map((exchange, index) => (
         <option id="any" key={ index } value={ exchange }>

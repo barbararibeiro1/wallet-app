@@ -1,4 +1,4 @@
-import { DataType, DispatchType } from "../../types/types";
+import { DataType, DispatchType } from '../../types/types';
 
 export const UPDATE_EMAIL = 'UPDATE_EMAIL';
 export const SET_CURRENCY = 'SET_CURRENCY';
@@ -36,7 +36,7 @@ export function fetchData(dataExpense: DataType[]) {
       const response = await fetch('https://economia.awesomeapi.com.br/json/all');
       const data = await response.json();
 
-      const updatedExpenses = dataExpense.map(expense => ({ 
+      const updatedExpenses = dataExpense.map((expense) => ({
         ...expense, exchangeRates: data }));
       dispatch(successRequest(updatedExpenses));
     } catch (error: any) {

@@ -1,3 +1,4 @@
+import ExpensesList from '../components/Expenses List';
 import Header from '../components/Header';
 import WalletForm from '../components/WalletForm';
 
@@ -6,6 +7,7 @@ function Wallet() {
     <>
       <Header />
       <WalletForm />
+      <ExpensesList />
     </>
   );
 }

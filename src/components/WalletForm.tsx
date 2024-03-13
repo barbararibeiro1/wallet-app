@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch} from "react-redux";
-import thunk from "redux-thunk";
-import { RootState } from "../types/types";
-import InputElement from "../helpers/Input Element";
-import { setCurrencies, fetchData } from "../redux/actions";
-import SelectComponent from "../helpers/Exchange Select";
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../types/types';
+import InputElement from '../helpers/Input Element';
+import { setCurrencies, fetchData } from '../redux/actions';
+import SelectComponent from '../helpers/Exchange Select';
 
 const paymentOptions = ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'];
 const organizedTag = ['Alimentação', 'Lazer', 'Trabalho', 'Transporte', 'Saúde'];
@@ -15,7 +14,7 @@ function WalletForm() {
   const [description, setDescription] = useState('');
   const [userSelect, setUserSelect] = useState(
     {
-      curencie: 'USD',
+      currencie: 'USD',
       method: 'Dinheiro',
       tag: 'Alimentação',
     },
@@ -32,6 +31,10 @@ function WalletForm() {
     fetchAPI();
   }, [dispatch]);
 
+  useEffect(() => {
+    console.log(userSelect);
+  }, [userSelect]);
+
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = event.target;
     setUserSelect({ ...userSelect, [name]: value });
@@ -43,7 +46,7 @@ function WalletForm() {
       id: wallet.expenses.length || 0,
       value: expense,
       description,
-      currency: userSelect.curencie,
+      currency: userSelect.currencie,
       method: userSelect.method,
       tag: userSelect.tag,
       exchangeRates: {},

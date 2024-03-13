@@ -11,9 +11,9 @@ function Header() {
 
   const calculateTotalExpense = wallet.expenses
     ? wallet.expenses.reduce((total, item) => {
-      if (item.exchangeRates && item.currency && item.exchangeRates[item.currency] 
+      if (item.exchangeRates && item.currency && item.exchangeRates[item.currency]
           && item.exchangeRates[item.currency].ask) {
-        const allExpeses = parseFloat(item.value) 
+        const allExpeses = parseFloat(item.value)
           * parseFloat(item.exchangeRates[item.currency].ask);
         return total + allExpeses;
       } return total;
