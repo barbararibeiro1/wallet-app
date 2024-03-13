@@ -21,6 +21,14 @@ export type MenuSelectOptions = {
   expense?: string;
 };
 
+export type MenuSelectType = {
+  test: string;
+  options: string[];
+  optionType: string;
+  onHandleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  selectOptions: string,
+};
+
 export type ExchangeRate = {
   code: string;
   codein: string;
@@ -71,4 +79,21 @@ export type WalletType = {
 export type ReduxNeeds = {
   isFetching: boolean;
   errorMessage: string;
+};
+
+export type InputElementType = {
+  field: string;
+  onSetChange: (data: string) => void
+  setChange: string
+  inputField?: string
+  test?: string
+};
+
+export type generalExpensesType = {
+  type: string;
+  payload: {
+    email: string,
+    currencies: string[],
+    expenses: DataType,
+  }
 };
