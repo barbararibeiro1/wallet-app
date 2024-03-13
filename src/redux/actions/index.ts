@@ -1,4 +1,4 @@
-import { DispatchType } from "../../types";
+import { DispatchType } from "../../types/types";
 
 export const UPDATE_EMAIL = 'UPDATE_EMAIL';
 export const SET_CURRENCY = 'SET_CURRENCY';

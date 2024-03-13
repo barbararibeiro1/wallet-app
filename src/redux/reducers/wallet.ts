@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux';
 
+
 const initialState = {
   totalExpense: 0,
   exchangeRates: 0,
@@ -7,9 +8,6 @@ const initialState = {
   currency: 'BRL',
 };
 
-function calculateTotalExpense(outgoing) {
-  return outgoing.reduce((total, item) => total + item.expense, 0);
-}
 
 const walletReducer = (state = initialState, action: AnyAction) => {
   switch (action.type) {
