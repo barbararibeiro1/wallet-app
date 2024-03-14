@@ -27,9 +27,7 @@ export function Table() {
             <td>{expense.method}</td>
             <td>{formatCurrency(expense.value)}</td>
             <td>
-              {expense.currency === 'USD'
-                ? 'Dólar Americano/Real Brasileiro'
-                : 'Euro/Real Brasileiro'}
+              {expense.exchangeRates[expense.currency].name }
             </td>
             <td>{formatCurrency(expense.exchangeRates[expense.currency].ask)}</td>
             <td>
